@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void addUser(User user, Set<Long> roleIds) {
-        if(roleIds != null) {
+        if (roleIds != null) {
             user.setRoles(roleIds.stream()
                     .map(roleService::findById)
                     .collect(Collectors.toSet()));
@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
     public void update(User updatedUser, Set<Long> roleIds) {
         User user = findById(updatedUser.getId());
 
-        if(roleIds != null) {
+        if (roleIds != null) {
             user.setRoles(roleIds.stream()
                     .map(roleService::findById)
                     .collect(Collectors.toSet()));
@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
         user.setUsername(updatedUser.getUsername());
         user.setEmail(updatedUser.getEmail());
         user.setAge(updatedUser.getAge());
-        if(updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
             updatedUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         }
         userRepository.save(user);
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void delete(Long id) {
-        if (id != null && id  > 0) {
+        if (id != null && id > 0) {
             userRepository.deleteById(id);
         }
     }

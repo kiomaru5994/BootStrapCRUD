@@ -1,7 +1,6 @@
 package ru.kiomaru.service;
 
 
-
 import ru.kiomaru.entity.Role;
 import ru.kiomaru.exception.RoleNotFoundException;
 

@@ -12,7 +12,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name= "role")
+@Table(name = "role")
 public class Role implements GrantedAuthority {
 
     @Id

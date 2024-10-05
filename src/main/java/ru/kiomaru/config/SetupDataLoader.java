@@ -70,7 +70,7 @@ public class SetupDataLoader implements
     @Transactional
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        if(!userService.getAllUsers().isEmpty()) {
+        if (!userService.getAllUsers().isEmpty()) {
             return;
         }
 
