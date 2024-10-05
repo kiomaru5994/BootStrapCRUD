@@ -49,7 +49,7 @@ public class WebSecurityConfig {
                 .formLogin(form -> form.loginPage("/login").successHandler(new SuccessUserHandler())
                         .permitAll()
                 )
-                .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/index").permitAll()
+                .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/").permitAll()
                 ).userDetailsService(userDetailsService)
                 .build();
     }

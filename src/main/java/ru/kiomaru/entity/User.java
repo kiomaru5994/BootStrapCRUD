@@ -1,6 +1,8 @@
 package ru.kiomaru.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,17 +24,26 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
-    @Column(unique = true)
+    @NotEmpty
+    @Column(name = "username", unique = true)
     private String username;
 
+    @NotEmpty
+    @Column(name = "password")
     private String password;
 
+    @NotEmpty
+    @Column(name = "email", unique = true)
     private String email;
 
-    private String phone;
+    @NotNull
+    @Column(name = "age")
+    private int age;
 
+    @NotEmpty
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
             joinColumns =

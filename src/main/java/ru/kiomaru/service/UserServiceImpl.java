@@ -43,12 +43,13 @@ public class UserServiceImpl implements UserService {
                     .map(roleService::findById)
                     .collect(Collectors.toSet()));
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
     @Override
     public User findById(Long id) throws UserNotFoundException {
-        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("couldn't find user with id " + id));
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("couldn't find user with email " + id));
     }
 
 
@@ -70,7 +71,7 @@ public class UserServiceImpl implements UserService {
         }
         user.setUsername(updatedUser.getUsername());
         user.setEmail(updatedUser.getEmail());
-        user.setPhone(updatedUser.getPhone());
+        user.setAge(updatedUser.getAge());
         if(updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
             updatedUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         }
@@ -86,7 +87,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByEmail(String email) throws UserNotFoundException {
+        return userRepository.getUserByEmail(email).orElseThrow(() -> new UserNotFoundException("couldn't find user with email " + email));
+    }
+
+    @Override
     public User findByUsername(String username) throws UserNotFoundException {
-        return userRepository.getUserByUsername(username).orElseThrow(() -> new UserNotFoundException("couldn't find user with username " +username));
+        return userRepository.getUserByEmail(username).orElseThrow(() -> new UserNotFoundException("couldn't find user with username " + username));
     }
 }

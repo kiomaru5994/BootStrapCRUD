@@ -56,8 +56,12 @@ public class SetupDataLoader implements
             if (userStr.equals("admin")) {
                 newUser.addRole(roles.get(0));
                 newUser.addRole(roles.get(1));
+                newUser.setAge(20);
+                newUser.setEmail("admin@admin.com");
             } else if (userStr.equals("user")) {
                 newUser.addRole(roles.get(1));
+                newUser.setEmail("user@user.com");
+                newUser.setAge(20);
             }
             return newUser;
         }
@@ -66,6 +70,9 @@ public class SetupDataLoader implements
     @Transactional
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
+        if(!userService.getAllUsers().isEmpty()) {
+            return;
+        }
 
         if (alreadySetup) {
             return;
