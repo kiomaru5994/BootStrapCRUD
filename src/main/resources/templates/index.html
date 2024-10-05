@@ -1,13 +1,19 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>HI!</title>
+    <title>Главная страница</title>
 </head>
 <body>
-<h3>Hello! I'm - new Crud app. very simple, but still great!</h3>
-<a href="/user">I can show you Yor page:</a>
-<a href="/admin/">I can show you all users (if you ADMIN):</a>
+<div style="text-align: center; margin-top: 50px;">
+    <h1>Добро пожаловать на главную страницу</h1>
+    <hr>
+    <h3>На этом сайте вы можете управлять пользователями в базе данных:</h3>
+    <p>Просматривать, создавать, изменять, удалять пользователей.</p>
+    <hr>
+    <p>Для работы с данной возможностью перейдите по ссылке ниже:</p>
+    <a href="/user">Перейти на страницу работы с пользователями.</a> <br>
+    <a href="/admin">Перейти в админку.</a>
+</div>
 </body>
 </html>
