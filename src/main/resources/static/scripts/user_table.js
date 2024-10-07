@@ -1,9 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
     loadRoles().then(() => {
-        loadUsers(); // Загружаем пользователей только после загрузки ролей
+        loadUsers();
     });
 
-    // Обработчик для кнопки подтверждения удаления
     document.getElementById('confirmDeleteButton').addEventListener('click', function () {
         const userId = this.dataset.userId;
 
@@ -29,7 +28,6 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error('Ошибка выполнения запроса на удаление:', error));
     });
 
-    // Обработчик для добавления пользователя
     document.getElementById('addUserForm').addEventListener('submit', function (event) {
         event.preventDefault();
 
@@ -56,7 +54,6 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error('Ошибка добавления пользователя:', error));
     });
 
-    // Обработчик для редактирования пользователя
     document.getElementById('confirmEditButton').addEventListener('click', function () {
         const userId = document.getElementById('editId').value;
 
@@ -79,14 +76,12 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(() => {
                 console.log('User updated successfully.');
 
-                // Закрыть модальное окно
                 const editModalElement = document.getElementById('editModal');
                 if (editModalElement) {
                     const editModal = bootstrap.Modal.getInstance(editModalElement);
                     editModal.hide();
                 }
 
-                // Перезагрузить всех пользователей после редактирования
                 loadUsers();
             })
             .catch(error => console.error('Ошибка редактирования пользователя:', error));
@@ -181,13 +176,11 @@ function showEditModal(userId) {
             document.getElementById('editEmail').value = user.email;
             document.getElementById('editAge').value = user.age;
 
-            // Обновить список ролей
             const rolesSelect = document.getElementById('editRoles');
             Array.from(rolesSelect.options).forEach(option => {
                 option.selected = user.roles.map(role => role.name).includes(option.text);
             });
 
-            // Показать модальное окно редактирования
             const editModalElement = document.getElementById('editModal');
             if (editModalElement) {
                 const editModal = new bootstrap.Modal(editModalElement, {});
@@ -205,16 +198,13 @@ function showDeleteModal(userId) {
             return response.json();
         })
         .then(user => {
-            // Заполнить модальное окно данными пользователя
             document.getElementById('deleteId').value = user.id;
             document.getElementById('deleteUsername').value = user.username;
             document.getElementById('deleteEmail').value = user.email;
             document.getElementById('deleteAge').value = user.age;
 
-            // Установить ID пользователя в кнопку подтверждения удаления
             document.getElementById('confirmDeleteButton').dataset.userId = user.id;
 
-            // Показать модальное окно удаления
             const deleteModalElement = document.getElementById('deleteModal');
             if (deleteModalElement) {
                 const deleteModal = new bootstrap.Modal(deleteModalElement, {});
