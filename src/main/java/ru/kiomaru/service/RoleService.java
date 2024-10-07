@@ -17,4 +17,6 @@ public interface RoleService {
     Role findById(Long id);
 
     void delete(Long id);
+
+    Long findIdByName(String name);
 }

@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(Long id) throws UserNotFoundException {
-        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("couldn't find user with email " + id));
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("couldn't find user with id " + id));
     }
 
 

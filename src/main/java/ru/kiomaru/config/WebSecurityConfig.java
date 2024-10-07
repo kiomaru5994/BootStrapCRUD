@@ -45,7 +45,10 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/", "/index").permitAll()
                         .requestMatchers("/user/**").authenticated()
-                        .requestMatchers("/admin/**").hasRole("ADMIN").anyRequest().permitAll())
+                        .requestMatchers("/api/user/**").authenticated()
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().permitAll())
                 .formLogin(form -> form.loginPage("/login").successHandler(new SuccessUserHandler())
                         .permitAll()
                 )
