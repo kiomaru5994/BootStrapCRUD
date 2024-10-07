@@ -2,9 +2,11 @@ package ru.kiomaru.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.kiomaru.dto.UserCreateDTO;
 import ru.kiomaru.dto.UserDTO;
+import ru.kiomaru.entity.Role;
 import ru.kiomaru.entity.User;
 import ru.kiomaru.service.RoleService;
 import ru.kiomaru.service.UserService;
@@ -70,5 +72,23 @@ public class UserRestController {
     public ResponseEntity<User> deleteUser(@PathVariable Long id) {
         userService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @GetMapping("/roles")
+    public ResponseEntity<List<Role>> getAllRoles() {
+        List<Role> roles = roleService.findAll();
+        return ResponseEntity.ok(roles);
+    }
+
+    @GetMapping("/user/me")
+    public ResponseEntity<UserDTO> getCurrentUser(Authentication authentication) {
+        String username = authentication.getName();
+        User user = userService.findByUsername(username);
+        if (user != null) {
+            UserDTO userDTO = UserConverter.convertUserToDTO(user);
+            return ResponseEntity.ok(userDTO);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

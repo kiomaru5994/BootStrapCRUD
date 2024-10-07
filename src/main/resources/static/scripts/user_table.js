@@ -1,6 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
-    loadUsers();
+    loadRoles().then(() => {
+        loadUsers(); // Загружаем пользователей только после загрузки ролей
+    });
 
+    // Обработчик для кнопки подтверждения удаления
     document.getElementById('confirmDeleteButton').addEventListener('click', function () {
         const userId = this.dataset.userId;
 
@@ -26,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error('Ошибка выполнения запроса на удаление:', error));
     });
 
+    // Обработчик для добавления пользователя
     document.getElementById('addUserForm').addEventListener('submit', function (event) {
         event.preventDefault();
 
@@ -52,6 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error('Ошибка добавления пользователя:', error));
     });
 
+    // Обработчик для редактирования пользователя
     document.getElementById('confirmEditButton').addEventListener('click', function () {
         const userId = document.getElementById('editId').value;
 
@@ -74,12 +79,14 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(() => {
                 console.log('User updated successfully.');
 
+                // Закрыть модальное окно
                 const editModalElement = document.getElementById('editModal');
                 if (editModalElement) {
                     const editModal = bootstrap.Modal.getInstance(editModalElement);
                     editModal.hide();
                 }
 
+                // Перезагрузить всех пользователей после редактирования
                 loadUsers();
             })
             .catch(error => console.error('Ошибка редактирования пользователя:', error));
@@ -87,8 +94,14 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function loadUsers() {
-    fetch('/api/users')
-        .then(response => response.json())
+    console.log('Loading users...');
+    return fetch('/api/users')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Ошибка загрузки пользователей: ' + response.statusText);
+            }
+            return response.json();
+        })
         .then(users => {
             console.log('Loaded users:', users);
             const userTable = document.getElementById('userTable');
@@ -99,6 +112,33 @@ function loadUsers() {
             });
         })
         .catch(error => console.error('Ошибка загрузки пользователей:', error));
+}
+
+function loadRoles() {
+    console.log('Loading roles...');
+    return fetch('/api/roles')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Ошибка загрузки ролей: ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(roles => {
+            console.log('Loaded roles:', roles);
+
+            const addRolesSelect = document.getElementById('roles');
+            const editRolesSelect = document.getElementById('editRoles');
+
+            roles.forEach(role => {
+                const option = document.createElement('option');
+                option.value = role.name; // Используем имя роли
+                option.text = role.name;
+
+                addRolesSelect.appendChild(option.cloneNode(true));
+                editRolesSelect.appendChild(option.cloneNode(true));
+            });
+        })
+        .catch(error => console.error('Ошибка загрузки ролей:', error));
 }
 
 function addUserToTable(user) {
@@ -127,48 +167,27 @@ function createUserRow(user) {
 }
 
 function formatRoles(roles) {
-    if (!Array.isArray(roles)) {
-        console.error('Roles is not an array:', roles);
-        return '';
-    }
     return roles.map(role => (typeof role === 'string' ? role : role.name)).join(', ');
-}
-
-function showDeleteModal(userId) {
-    fetch(`/api/users/${userId}`)
-        .then(response => response.json())
-        .then(user => {
-            document.getElementById('deleteId').value = user.id;
-            document.getElementById('deleteUsername').value = user.username;
-            document.getElementById('deleteEmail').value = user.email;
-            document.getElementById('deleteAge').value = user.age;
-
-            const deleteModalElement = document.getElementById('deleteModal');
-            if (deleteModalElement) {
-                const deleteModal = new bootstrap.Modal(deleteModalElement, {});
-                deleteModal.show();
-            }
-
-            document.getElementById('confirmDeleteButton').dataset.userId = user.id;
-        })
-        .catch(error => console.error('Ошибка загрузки данных пользователя:', error));
 }
 
 function showEditModal(userId) {
     fetch(`/api/users/${userId}`)
         .then(response => response.json())
         .then(user => {
+            console.log('Loaded user for editing:', user);
             document.getElementById('editId').value = user.id;
             document.getElementById('editUsername').value = user.username;
             document.getElementById('editPassword').value = user.password;
             document.getElementById('editEmail').value = user.email;
             document.getElementById('editAge').value = user.age;
 
+            // Обновить список ролей
             const rolesSelect = document.getElementById('editRoles');
             Array.from(rolesSelect.options).forEach(option => {
                 option.selected = user.roles.map(role => role.name).includes(option.text);
             });
 
+            // Показать модальное окно редактирования
             const editModalElement = document.getElementById('editModal');
             if (editModalElement) {
                 const editModal = new bootstrap.Modal(editModalElement, {});
@@ -176,4 +195,31 @@ function showEditModal(userId) {
             }
         })
         .catch(error => console.error('Ошибка загрузки данных пользователя:', error));
+}
+function showDeleteModal(userId) {
+    fetch(`/api/users/${userId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Ошибка загрузки данных пользователя для удаления: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(user => {
+            // Заполнить модальное окно данными пользователя
+            document.getElementById('deleteId').value = user.id;
+            document.getElementById('deleteUsername').value = user.username;
+            document.getElementById('deleteEmail').value = user.email;
+            document.getElementById('deleteAge').value = user.age;
+
+            // Установить ID пользователя в кнопку подтверждения удаления
+            document.getElementById('confirmDeleteButton').dataset.userId = user.id;
+
+            // Показать модальное окно удаления
+            const deleteModalElement = document.getElementById('deleteModal');
+            if (deleteModalElement) {
+                const deleteModal = new bootstrap.Modal(deleteModalElement, {});
+                deleteModal.show();
+            }
+        })
+        .catch(error => console.error('Ошибка загрузки данных пользователя для удаления:', error));
 }
